@@ -1,0 +1,52 @@
+// Geodetic to ECEF (Coordinate Transformation from Geodetic coordinate system to Earth-Centered Earth Fixed(ECEF) Coordinate System)
+// Code implements a transformation from Spherical Coordinate system to Cartesian Coordinate system  
+
+#include <iostream>
+#include <cmath>
+
+struct GeodeticCoordinates {
+    double latitude;  // in degrees
+    double longitude; // in degrees
+    double altitude;  // in meters
+};
+
+struct ECEFCoordinates {
+    double x;
+    double y;
+    double z;
+};
+
+//constant definition
+const double PI = 3.14159265358979323846;
+const double A = 6378137.0;         // semi-major axis of the Earth (meters)
+const double F = 1.0 / 298.257223563; // flattening
+const double B = A * (1.0 - F);     // semi-minor axis of the Earth (meters)
+const double E_SQUARED = (A * A - B * B) / (A * A); // eccentricity squared
+
+double degToRad(double deg) {
+    return deg * (PI / 180.0);
+}
+
+ECEFCoordinates geodeticToECEF(const GeodeticCoordinates& geo) {
+    double latRad = degToRad(geo.latitude);
+    double lonRad = degToRad(geo.longitude);
+    double height = geo.altitude;
+
+    double N = A / sqrt(1.0 - E_SQUARED * sin(latRad) * sin(latRad));
+
+    ECEFCoordinates ecef;
+    ecef.x = (N + height) * cos(latRad) * cos(lonRad);
+    ecef.y = (N + height) * cos(latRad) * sin(lonRad);
+    ecef.z = (N * (1.0 - E_SQUARED) + height) * sin(latRad);
+
+    return ecef;
+}
+
+int main() {
+    GeodeticCoordinates geo = {xx.xxxx, yyyy.yyyy, z.z}; // Define coordinates  
+    ECEFCoordinates ecef = geodeticToECEF(geo);
+    
+    std::cout << "ECEF Coordinates: (" << ecef.x << ", " << ecef.y << ", " << ecef.z << ")\n";
+    
+    return 0;
+}
